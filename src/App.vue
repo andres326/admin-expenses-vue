@@ -86,6 +86,11 @@ const editExpense = (id) => {
   Object.assign(expense, { ...expenseEdit })
   openModal()
 }
+
+const deleteExpense = () => {
+  expenses.value = expenses.value.filter(exp => exp.id !== expense.id)
+  closeModal()
+}
 </script>
 
 <template>
@@ -105,8 +110,9 @@ const editExpense = (id) => {
       <div class="create-expense">
         <img :src="newExpenseIcon" alt="new expense icon" @click="openModal" />
       </div>
-      <Modal v-if="modal.show" @close-modal="closeModal" @save-expense="saveExpense" :modal="modal" :available="available"
-        :id="expense.id" v-model:name="expense.name" v-model:qty="expense.qty" v-model:category="expense.category" />
+      <Modal v-if="modal.show" @close-modal="closeModal" @save-expense="saveExpense" @delete-expense="deleteExpense"
+        :modal="modal" :available="available" :id="expense.id" v-model:name="expense.name" v-model:qty="expense.qty"
+        v-model:category="expense.category" />
     </main>
   </div>
 </template>

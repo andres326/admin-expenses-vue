@@ -5,7 +5,7 @@ import Alert from './Alert.vue'
 
 const error = ref('')
 
-const emit = defineEmits(['close-modal', 'update:name', 'update:qty', 'update:category', 'save-expense'])
+const emit = defineEmits(['close-modal', 'update:name', 'update:qty', 'update:category', 'save-expense', 'delete-expense'])
 const props = defineProps({
   modal: {
     type: Object,
@@ -102,6 +102,7 @@ const isEditing = computed(() => props.id)
         </div>
         <input type="submit" :value="[isEditing ? 'Edit' : 'Add']">
       </form>
+      <button v-if="isEditing" type="button" class="delete-btn" @click="$emit('delete-expense')">Delete</button>
     </div>
   </div>
 </template>
@@ -141,7 +142,7 @@ const isEditing = computed(() => props.id)
 }
 
 .new-expense {
-  margin: 10rem auto 0 auto;
+  margin: 6rem auto 0 auto;
   display: grid;
   gap: 2rem;
 }
@@ -176,5 +177,18 @@ const isEditing = computed(() => props.id)
   color: var(--white);
   font-weight: 700;
   cursor: pointer;
+}
+
+.delete-btn {
+  border: none;
+  padding: 1rem;
+  width: 100%;
+  background-color: #ef4444;
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--white);
+  margin-top: 2rem;
+  cursor: pointer;
+  border-radius: 1rem;
 }
 </style>
