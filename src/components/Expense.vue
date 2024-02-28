@@ -25,6 +25,8 @@ const dictIcons = {
   health: HealthIcon,
   subscription: SubsIcon
 }
+
+defineEmits(['edit-expense'])
 </script>
 
 <template>
@@ -33,7 +35,7 @@ const dictIcons = {
       <img :src="dictIcons[expense.category]" alt="expense icon" class="icon" />
       <div class="details">
         <p class="category">{{ expense.category }}</p>
-        <p class="name">{{ expense.name }}</p>
+        <p class="name" @click="$emit('edit-expense', expense.id)">{{ expense.name }}</p>
         <p class="date">Date: <span>{{ formatDate(expense.date) }}</span></p>
       </div>
     </div>

@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import closeModal from '../assets/img/close.svg'
 import Alert from './Alert.vue'
 
@@ -23,10 +23,20 @@ const props = defineProps({
     type: String,
     required: true
   },
+  available: {
+    type: Number,
+    required: true
+  },
+  id: {
+    type: [String, null],
+    required: true
+  },
 })
 
+const oldQty = props.qty
+
 const addExpense = () => {
-  const { name, category, qty } = props
+  const { name, category, qty, available, id } = props
   if ([name, category, qty].includes('')) {
     error.value = 'All fields are required'
     setTimeout(() => { error.value = '' }, 3000)
@@ -37,9 +47,24 @@ const addExpense = () => {
     setTimeout(() => { error.value = '' }, 3000)
     return
   }
+  if (id) {
+    if (qty > oldQty + available) {
+      error.value = 'You are exceeding the available budget'
+      setTimeout(() => { error.value = '' }, 3000)
+      return
+    }
+  } else {
+    if (available < qty) {
+      error.value = 'You are exceeding the available budget'
+      setTimeout(() => { error.value = '' }, 3000)
+      return
+    }
+  }
 
   emit('save-expense')
 }
+
+const isEditing = computed(() => props.id)
 </script>
 
 <template>
@@ -50,7 +75,7 @@ const addExpense = () => {
 
     <div class="container container-form" :class="[modal.animate ? 'animate' : 'close']">
       <form class="new-expense" @submit.prevent="addExpense">
-        <legend>Add Expense</legend>
+        <legend>{{ isEditing ? 'Edit Expense' : 'Add Expense' }}</legend>
         <Alert v-if="error">{{ error }}</Alert>
         <div class="field">
           <label for="name">Expense name:</label>
@@ -66,7 +91,7 @@ const addExpense = () => {
           <label for="category">Category:</label>
           <select id="category" :value="category" @input="$event => $emit('update:category', $event.target.value)">
             <option value=""> -- Select --</option>
-            <option value="savings">Savings</option>
+            <option value="saving">Savings</option>
             <option value="food">Food</option>
             <option value="home">Home</option>
             <option value="sundryExpenses">Sundry expenses</option>
@@ -75,7 +100,7 @@ const addExpense = () => {
             <option value="subscriptions">Subscriptions</option>
           </select>
         </div>
-        <input type="submit" value="Add">
+        <input type="submit" :value="[isEditing ? 'Edit' : 'Add']">
       </form>
     </div>
   </div>
