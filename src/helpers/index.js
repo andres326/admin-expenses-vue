@@ -3,3 +3,10 @@ export const formatQty = (qty) =>
 
 export const generateUID = () =>
   `${Date.now().toString(36)}${Math.random().toString(36).substring(2)}`;
+
+export const formatDate = (date) =>
+  new Date(date).toLocaleString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: '2-digit',
+  });

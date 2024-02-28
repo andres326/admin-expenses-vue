@@ -3,6 +3,7 @@ import { ref, reactive } from 'vue';
 import Budget from './components/Budget.vue'
 import BudgetManager from './components/BudgetManager.vue';
 import Modal from './components/Modal.vue'
+import Expense from './components/Expense.vue'
 import { generateUID } from './helpers'
 import newExpenseIcon from './assets/img/new_expense.svg'
 
@@ -59,9 +60,8 @@ const saveExpense = () => {
 </script>
 
 <template>
-  <div>
+  <div :class="{ fixed: modal.show }">
     <header>
-
       <h1>Expenses Planner</h1>
       <div class="container-header container shadow">
         <Budget v-if="budget === 0" @define-budget="defineBudget" />
@@ -69,6 +69,10 @@ const saveExpense = () => {
       </div>
     </header>
     <main v-if="budget > 0">
+      <div class="expenses-list container">
+        <h2>{{ expenses.length > 0 ? 'Expenses List' : 'No expenses yet' }}</h2>
+        <Expense v-for="expense in expenses" :key="expense.id" :expense="expense" />
+      </div>
       <div class="create-expense">
         <img :src="newExpenseIcon" alt="new expense icon" @click="openModal" />
       </div>
@@ -113,6 +117,11 @@ h2 {
   font-size: 3rem;
 }
 
+.fixed {
+  overflow: hidden;
+  height: 100vh;
+}
+
 header {
   background-color: var(--blue);
 }
@@ -152,5 +161,14 @@ header h1 {
 .create-expense img {
   width: 5rem;
   cursor: pointer;
+}
+
+.expenses-list {
+  margin-top: 10rem;
+}
+
+.expenses-list h2 {
+  font-weight: 900;
+  color: var(--dark-gray);
 }
 </style>
