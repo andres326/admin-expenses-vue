@@ -1,13 +1,45 @@
 <script setup>
+import { ref } from 'vue';
 import closeModal from '../assets/img/close.svg'
+import Alert from './Alert.vue'
 
-defineEmits(['close-modal'])
+const error = ref('')
+
+const emit = defineEmits(['close-modal', 'update:name', 'update:qty', 'update:category', 'save-expense'])
 const props = defineProps({
   modal: {
     type: Object,
     required: true
-  }
+  },
+  name: {
+    type: String,
+    required: true
+  },
+  qty: {
+    type: [String, Number],
+    required: true
+  },
+  category: {
+    type: String,
+    required: true
+  },
 })
+
+const addExpense = () => {
+  const { name, category, qty } = props
+  if ([name, category, qty].includes('')) {
+    error.value = 'All fields are required'
+    setTimeout(() => { error.value = '' }, 3000)
+    return
+  }
+  if (qty <= 0) {
+    error.value = 'Quantity should be greater than 0'
+    setTimeout(() => { error.value = '' }, 3000)
+    return
+  }
+
+  emit('save-expense')
+}
 </script>
 
 <template>
@@ -17,20 +49,23 @@ const props = defineProps({
     </div>
 
     <div class="container container-form" :class="[modal.animate ? 'animate' : 'close']">
-      <form class="new-expense">
+      <form class="new-expense" @submit.prevent="addExpense">
         <legend>Add Expense</legend>
+        <Alert v-if="error">{{ error }}</Alert>
         <div class="field">
           <label for="name">Expense name:</label>
-          <input type="text" id="name" placeholder="Add the expense name">
+          <input type="text" id="name" placeholder="Add the expense name" :value="name"
+            @input="$event => $emit('update:name', $event.target.value)">
         </div>
         <div class="field">
           <label for="quantity">Quantity:</label>
-          <input type="number" id="quantity" placeholder="Add the expense quantity">
+          <input type="number" id="quantity" placeholder="Add the expense quantity" :value="qty"
+            @input="$event => $emit('update:qty', +$event.target.value)">
         </div>
         <div class="field">
           <label for="category">Category:</label>
-          <select id="category">
-            <option value="">Select</option>
+          <select id="category" :value="category" @input="$event => $emit('update:category', $event.target.value)">
+            <option value=""> -- Select --</option>
             <option value="savings">Savings</option>
             <option value="food">Food</option>
             <option value="home">Home</option>

@@ -3,14 +3,24 @@ import { ref, reactive } from 'vue';
 import Budget from './components/Budget.vue'
 import BudgetManager from './components/BudgetManager.vue';
 import Modal from './components/Modal.vue'
+import { generateUID } from './helpers'
 import newExpenseIcon from './assets/img/new_expense.svg'
 
 const budget = ref(0)
 const available = ref(0)
+const expenses = ref([])
 
 const modal = reactive({
   show: false,
   animate: false
+})
+
+const expense = reactive({
+  name: '',
+  qty: '',
+  category: '',
+  id: null,
+  date: ''
 })
 
 const defineBudget = (qty) => {
@@ -29,6 +39,23 @@ const closeModal = () => {
   modal.animate = false
   setTimeout(() => { modal.show = false }, 300)
 }
+
+const saveExpense = () => {
+  expenses.value.push({
+    ...expense,
+    date: Date.now(),
+    id: generateUID()
+  })
+
+  closeModal()
+  Object.assign(expense, {
+    name: '',
+    qty: '',
+    category: '',
+    id: null,
+    date: ''
+  })
+}
 </script>
 
 <template>
@@ -45,7 +72,8 @@ const closeModal = () => {
       <div class="create-expense">
         <img :src="newExpenseIcon" alt="new expense icon" @click="openModal" />
       </div>
-      <Modal v-if="modal.show" @close-modal="closeModal" :modal="modal" />
+      <Modal v-if="modal.show" @close-modal="closeModal" @save-expense="saveExpense" :modal="modal"
+        v-model:name="expense.name" v-model:qty="expense.qty" v-model:category="expense.category" />
     </main>
   </div>
 </template>
