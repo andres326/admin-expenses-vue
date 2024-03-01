@@ -117,6 +117,11 @@ const filteredExpenses = computed(() => {
   }
   return expenses.value
 })
+
+const resetApp = () => {
+  expenses.value = []
+  budget.value = 0
+}
 </script>
 
 <template>
@@ -125,7 +130,7 @@ const filteredExpenses = computed(() => {
       <h1>Expenses Planner</h1>
       <div class="container-header container shadow">
         <Budget v-if="budget === 0" @define-budget="defineBudget" />
-        <BudgetManager v-else :budget="budget" :available="available" :spent="spent" />
+        <BudgetManager v-else :budget="budget" :available="available" :spent="spent" @reset-app="resetApp" />
       </div>
     </header>
     <main v-if="budget > 0">

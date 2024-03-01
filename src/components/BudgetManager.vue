@@ -1,6 +1,8 @@
 
 <script setup>
-import graph from '../assets/img/graph.jpg'
+import { computed } from 'vue';
+import CircleProgress from 'vue3-circle-progress'
+import 'vue3-circle-progress/dist/circle-progress.css'
 import { formatQty } from '../helpers'
 
 const props = defineProps({
@@ -17,15 +19,24 @@ const props = defineProps({
     required: true
   }
 })
+
+defineEmits(['reset-app'])
+
+const percentage = computed(() =>
+  parseInt(((props.budget - props.available) / props.budget) * 100)
+)
+
+console.log('´c', percentage)
 </script>
 
 <template>
   <div class="two-columns">
     <div class="graph-container">
-      <img :src="graph" />
+      <p class="percentage">{{ percentage }}%</p>
+      <CircleProgress :percent="percentage" :size="250" :border-width="20" :border-bg-width="20" fill-color="#3b82f6" />
     </div>
     <div class="budget-container">
-      <button class="reset-app">Reset values</button>
+      <button class="reset-app" type="button" @click="$emit('reset-app')">Reset values</button>
       <p><span>Budget:</span>
         {{ formatQty(budget) }}</p>
       <p><span>Available:</span>
@@ -37,6 +48,23 @@ const props = defineProps({
 </template>
 
 <style scoped>
+.graph-container {
+  position: relative;
+}
+
+.percentage {
+  position: absolute;
+  margin: auto;
+  top: calc(50% - 1.5rem);
+  left: 0;
+  right: 0;
+  text-align: center;
+  z-index: 100;
+  font-size: 3rem;
+  font-weight: 900;
+  color: var(--dark-gray);
+}
+
 .two-columns {
   display: flex;
   flex-direction: column;
